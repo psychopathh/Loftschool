@@ -104,10 +104,11 @@ function returnArgumentsArray() {
    console.log(newSum()) выведет 6
  */
 function bindFunction(fn) {
-	var f = function () {
-		return fn.apply(this, [].slice.call(arguments, null));
-	};
-	return f;
+	var args = [].slice.call(arguments, 1);
+	var F = function () {
+		return fn.apply(fn, args);
+	}
+	return F;
 };
 export {
     returnFirstArgument,
