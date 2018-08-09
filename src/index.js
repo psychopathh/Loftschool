@@ -52,7 +52,7 @@ function findAllPSiblings(where) {
     var result = [];
 
     for (var element of where.children) {
-        if (element.nextElementSibling && element.nextElementSibling.nodeName == "P") {
+        if (element.nextElementSibling && element.nextElementSibling.nodeName == 'P') {
             result.push(element);
         }
     }
