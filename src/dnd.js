@@ -27,18 +27,20 @@ const homeworkContainer = document.querySelector('#homework-container');
    homeworkContainer.appendChild(newDiv);
  */
 function createDiv() {
-	function getRandom(min,max) {
-		return Math.floor(Math.random() * (max - min)) + min;
-	}
-	var newDiv = document.createElement('div');
-	newDiv.className = 'draggable-div';
-	newDiv.style.width = getRandom(20, 300) + 'px';
-	newDiv.style.height = getRandom(10, 300) + 'px';
-	newDiv.style.position = 'absolute';
-	newDiv.style.background = '#' + Math.round(0xffffff * Math.random()).toString(16);
-	newDiv.style.left = getRandom(100, 500) + 'px'
-	newDiv.style.top = getRandom(100, 500) + 'px'
-	return newDiv;
+    function getRandom(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+    var newDiv = document.createElement('div');
+
+    newDiv.className = 'draggable-div';
+    newDiv.style.width = getRandom(20, 300) + 'px';
+    newDiv.style.height = getRandom(10, 300) + 'px';
+    newDiv.style.position = 'absolute';
+    newDiv.style.background = '#' + Math.round(0xffffff * Math.random()).toString(16);
+    newDiv.style.left = getRandom(100, 500) + 'px';
+    newDiv.style.top = getRandom(100, 500) + 'px';
+
+    return newDiv;
 }
 
 /*
@@ -50,6 +52,29 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
+    target.onmousedown = function(event) {
+        target.style.position = 'absolute'
+        moveAt(event);
+        document.body.appendChild(target)
+        target.style.zIndex = 100
+        function moveAt(event) {
+            target.style.left = event.pageX - target.offsetWidth / 2 + 'px';
+            target.style.top = event.pageY - target.offsetHeight / 2 + 'px';
+        }
+        document.onmousemove = function (event) {
+            moveAt(event)
+        }
+
+        target.onmouseup = function () {
+            document.onmousemove = null;
+            target.onmouseup = null;
+        }
+
+    }
+    target.ondragstart = function () {
+
+        return false;
+    };
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
