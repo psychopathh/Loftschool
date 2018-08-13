@@ -151,6 +151,34 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+    var result = { tags: {}, classes: {}, texts: 0 };
+
+    var stat = function (root) {
+        for (var i = 0; i < root.childNodes.length; i++) {
+            if (root.childNodes[i].nodeType == 3) {
+                result.texts++
+            } 
+            if (root.childNodes[i].nodeType == 1) {
+                if (root.childNodes[i].tagName) {
+                    result.tags[root.childNodes[i].tagName] = result.tags[root.childNodes[i].tagName] || 0;
+                    result.tags[root.childNodes[i].tagName]++;
+                } 
+                if (root.childNodes[i].classList) {
+                    for (var clas of root.childNodes[i].classList) {
+                        result.classes[clas] = result.classes[clas] || 0;
+                        result.classes[clas]++;
+                    }
+                }
+            }
+            if (root.childNodes[i].childNodes.length != 0) {
+                stat(root.childNodes[i])
+            }
+        }
+    }
+
+    stat(root)
+
+    return result;
 }
 
 /*
@@ -186,6 +214,28 @@ function collectDOMStat(root) {
    }
  */
 function observeChildNodes(where, fn) {
+    var observer = new MutationObserver(function (mutations) {
+        var res = {
+            type: '',
+            nodes: []
+        }
+
+        mutations.forEach(function (mutation) {
+            if (mutation.addedNodes.length > 0) {
+                res.type = 'insert';
+                res.nodes.push(...mutation.addedNodes)
+            } else if (mutation.removedNodes.length > 0) {
+                res.type = 'remove';
+                res.nodes.push(...mutation.removedNodes)
+            }
+        });
+        fn(res)
+    });
+
+    var config = { attributes: true, childList: true, characterData: true };
+
+    observer.observe(where, config);
+
 }
 
 export {
