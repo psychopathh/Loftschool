@@ -36,38 +36,10 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 
-function loadTowns() {
-    return new Promise(function (resolve, reject) {
-        var towns = [];
-        var xhr = new XMLHttpRequest();
-
-        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
-        xhr.send();
-        xhr.addEventListener('load', () => {
-            if (xhr.status >= 400) {
-                reject();
-            } else {
-                var townsObj = JSON.parse(xhr.responseText)
-
-                for (var key in townsObj) {
-                    towns.push(townsObj[key])
-                }
-                towns.sort(function (obj1, obj2) {
-                    if (obj1.name < obj2.name) { 
-                        return -1;
-                    }
-                    if (obj1.name > obj2.name) { 
-                        return 1;
-                    }
-                    
-                    return 0;
-                });
-                
-                return resolve(towns)
-            }
-        })
-    })
-}
+import {
+	loadAndSortTowns as loadTowns
+} from './index';
+loadTowns();
 /*
 Функция должна проверять встречается ли подстрока chunk в строке full
 Проверка должна происходить без учета регистра символов

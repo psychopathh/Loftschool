@@ -37,27 +37,26 @@ function loadAndSortTowns() {
         xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
         xhr.send();
         xhr.addEventListener('load', () => {
+            var townsObj = JSON.parse(xhr.responseText)
+
+            for (var key in townsObj) {
+                towns.push(townsObj[key])
+            }
+            towns.sort(function (obj1, obj2) {
+                if (obj1.name < obj2.name) {
+                    return -1; 
+                }
+                if (obj1.name > obj2.name) { 
+                    return 1; 
+                }
+                    
+                return 0;
+            });
             if (xhr.status >= 400) {
                 reject();
-            } else {
-                var townsObj = JSON.parse(xhr.responseText)
-
-                for (var key in townsObj) {
-                    towns.push(townsObj[key])
-                }
-                towns.sort(function (obj1, obj2) {
-                    if (obj1.name < obj2.name) {
-                        return -1; 
-                    }
-                    if (obj1.name > obj2.name) { 
-                        return 1; 
-                    }
-                    
-                    return 0;
-                });
-                
-                return resolve(towns)
             }
+                
+            return resolve(towns)
         })
     })
 }
