@@ -116,6 +116,17 @@ loadTowns()
             })
         });
     })
+    .catch(function() {
+        filterBlock.style.display = 'none'
+        var text = document.createElement('p');
+        var buttonDelete = document.createElement('button')
+
+        homeworkContainer.appendChild(text).innerHTML = 'не удалось загрузить города'
+        homeworkContainer.appendChild(buttonDelete).innerHTML = 'Повторить';
+        homeworkContainer.querySelector('button').addEventListener('click', function () {
+            loadTowns();
+        })
+    })
 
 export {
     loadTowns,
