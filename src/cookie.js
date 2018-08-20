@@ -42,28 +42,29 @@ const addValueInput = homeworkContainer.querySelector('#add-value-input');
 const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
+var prov = function () {
+    document.cookie.split('; ').reduce((prev, current) => {
+        const [name, value] = current.split('=');
 
+        prev[name] = value;
+        for (var key in prev) {
+            if (addNameInput.value == key) {
+                prev[key] = addValueInput.value;
+            }
+        }
+
+        return prev;
+    }, {});
+}
+
+function isMatching(full, chunk) {
+    return full().includes(chunk())
+}
 filterNameInput.addEventListener('keyup', function() {
-    // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+	
 });
 
 addButton.addEventListener('click', () => {
-    var prov = function() { 
-        document.cookie.split('; ').reduce((prev, current) => {
-            const [name, value] = current.split('=');
-
-            prev[name] = value;
-            for (var key in prev) {
-                if (addNameInput.value == key) {
-                    prev[key] = addValueInput.value;
-                }
-            }
-        
-            return prev;
-        }, {});
-    }
-
-    prov();
     document.cookie = `${addNameInput.value}=${addValueInput.value}`
     let trWrap = document.createElement('tr'),
         tdName = document.createElement('td'),
@@ -74,13 +75,13 @@ addButton.addEventListener('click', () => {
     trWrap.appendChild(tdName).innerHTML = addNameInput.value;
     trWrap.appendChild(tdValue).innerHTML = addValueInput.value;
     trWrap.appendChild(buttonDelete).innerHTML = 'Удалить';
-    addNameInput.value='';
-    addValueInput.value='';
     buttonDelete.addEventListener('click', (e) =>{
         let target = e.target;
 
         if (target.tagName == 'BUTTON') {
+            document.cookie = `${tdName.textContent}=''; expires=${new Date(0)}`;
             listTable.removeChild(trWrap)
         }
     });
+    prov();
 });
