@@ -42,46 +42,64 @@ const addValueInput = homeworkContainer.querySelector('#add-value-input');
 const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
-var prov = function () {
-    document.cookie.split('; ').reduce((prev, current) => {
-        const [name, value] = current.split('=');
 
-        prev[name] = value;
-        for (var key in prev) {
-            if (addNameInput.value == key) {
-                prev[key] = addValueInput.value;
-            }
-        }
-
-        return prev;
-    }, {});
+function getCookies() {
+    return document.cookie
+        .split('; ')
+        .filter(Boolean)
+        .map(cookie => cookie.match(/^([^=]+)=(.+)/))
+        .reduce((obj, [, name, value]) => {
+            obj[name] = value;
+            
+            return obj;
+        }, {});
 }
 
 function isMatching(full, chunk) {
-    return full().includes(chunk())
+    return full.toLowerCase().includes(chunk.toLowerCase())
 }
+function table(cookie) {
+    listTable.innerHTML = '';
+    for (let key in cookie) {
+        if (key) {
+            let trWrap = document.createElement('tr'),
+                tdName = document.createElement('td'),
+                tdValue = document.createElement('td'),
+                buttonDelete = document.createElement('button');
+
+            trWrap.appendChild(buttonDelete).innerHTML = 'Удалить';
+            trWrap.appendChild(tdName).innerHTML = key;
+            trWrap.appendChild(tdValue).innerHTML = cookie[key];
+            if (isMatching(key, filterNameInput.value) || isMatching(cookie[key], filterNameInput.value)) {
+                listTable.appendChild(trWrap);
+            }
+            buttonDelete.addEventListener('click', (e) => {
+                let target = e.target;
+
+                if (target.tagName == 'BUTTON') {
+                    document.cookie = `${tdName.textContent}=''; expires=${new Date(0)}`;
+                    listTable.removeChild(trWrap)
+                }
+            });
+        }
+    }
+}
+
 filterNameInput.addEventListener('keyup', function() {
-	
+    let nameCook = filterNameInput.value;
+    let objFilter = {};
+
+    for (let key in getCookies()) {
+        if (isMatching(key, nameCook) || isMatching(getCookies()[key], nameCook)) {
+            objFilter[key] = getCookies()[key];
+        }
+    }
+    table(objFilter)
+
 });
 
 addButton.addEventListener('click', () => {
     document.cookie = `${addNameInput.value}=${addValueInput.value}`
-    let trWrap = document.createElement('tr'),
-        tdName = document.createElement('td'),
-        tdValue = document.createElement('td'),
-        buttonDelete = document.createElement('button');
-
-    listTable.appendChild(trWrap);
-    trWrap.appendChild(tdName).innerHTML = addNameInput.value;
-    trWrap.appendChild(tdValue).innerHTML = addValueInput.value;
-    trWrap.appendChild(buttonDelete).innerHTML = 'Удалить';
-    buttonDelete.addEventListener('click', (e) =>{
-        let target = e.target;
-
-        if (target.tagName == 'BUTTON') {
-            document.cookie = `${tdName.textContent}=''; expires=${new Date(0)}`;
-            listTable.removeChild(trWrap)
-        }
-    });
-    prov();
+    table(getCookies());
 });
+table(getCookies());
