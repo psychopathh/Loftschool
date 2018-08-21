@@ -67,9 +67,9 @@ function table(cookie) {
                 tdValue = document.createElement('td'),
                 buttonDelete = document.createElement('button');
 
-			trWrap.appendChild(tdName).innerHTML = key;
-			trWrap.appendChild(tdValue).innerHTML = cookie[key];
-			trWrap.appendChild(buttonDelete).innerHTML = 'Удалить';
+            trWrap.appendChild(tdName).innerHTML = key;
+            trWrap.appendChild(tdValue).innerHTML = cookie[key];
+            trWrap.appendChild(buttonDelete).innerHTML = 'Удалить';
             if (isMatching(key, filterNameInput.value) || isMatching(cookie[key], filterNameInput.value)) {
                 listTable.appendChild(trWrap);
             }
